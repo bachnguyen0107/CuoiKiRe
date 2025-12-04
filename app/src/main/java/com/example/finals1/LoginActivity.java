@@ -53,6 +53,10 @@ public class LoginActivity extends AppCompatActivity {
             }
             String salt = generateSalt();
             String hash = hashPassword(password, salt);
+            if (TextUtils.isEmpty(hash)) {
+                runOnUiThread(() -> Toast.makeText(this, "Failed to hash password", Toast.LENGTH_SHORT).show());
+                return;
+            }
             User user = new User(email, hash, salt);
             dao.insert(user);
             runOnUiThread(() -> Toast.makeText(this, "Registered. You can now login", Toast.LENGTH_SHORT).show());

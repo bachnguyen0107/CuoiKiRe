@@ -7,9 +7,6 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,5 +36,12 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
+        Button btnCreateSet = findViewById(R.id.btnCreateSet);
+        if (btnCreateSet != null) {
+            btnCreateSet.setOnClickListener(v -> {
+                Intent i = new Intent(MainActivity.this, CreateSetActivity.class);
+                startActivity(i);
+            });
+        }
     }
 }

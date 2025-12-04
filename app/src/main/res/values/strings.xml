@@ -10,4 +10,14 @@
     <!-- Home page strings -->
     <string name="welcome_plain">Welcome!</string>
     <string name="welcome_with_email">Welcome, %1$s</string>
+    <!-- Create set UI strings -->
+    <string name="create_set">Create a flashcard set</string>
+    <string name="title_hint">Title</string>
+    <string name="description_hint">Description</string>
+    <string name="add_card">Add card</string>
+    <string name="save_set">Save set</string>
+    <string name="enter_term">Enter term</string>
+    <string name="enter_definition">Enter definition</string>
+    <string name="add_two_cards_msg">You need at least two cards to create a set.</string>
+    <string name="set_saved">Set saved</string>
 </resources>
