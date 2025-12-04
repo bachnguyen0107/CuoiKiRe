@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">FInals1</string>
+    <string name="smartlearn_title">SmartLearn</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="skip_for_now">Skip for now</string>
+    <string name="logout">Logout</string>
+    <!-- Home page strings -->
+    <string name="welcome_plain">Welcome!</string>
+    <string name="welcome_with_email">Welcome, %1$s</string>
+</resources>
