@@ -20,4 +20,7 @@
     <string name="enter_definition">Enter definition</string>
     <string name="add_two_cards_msg">You need at least two cards to create a set.</string>
     <string name="set_saved">Set saved</string>
+    <string name="your_sets">Your Sets</string>
+    <string name="sets">Sets</string>
+    <string name="flashcards">Flashcards</string>
 </resources>

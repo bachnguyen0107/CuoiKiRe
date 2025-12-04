@@ -25,6 +25,12 @@
         <activity
             android:name=".CreateSetActivity"
             android:exported="false" />
+        <activity
+            android:name=".SetListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FlashcardListActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

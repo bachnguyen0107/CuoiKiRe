@@ -43,5 +43,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             });
         }
+
+        Button btnYourSets = findViewById(R.id.btnYourSets);
+        if (btnYourSets != null) {
+            btnYourSets.setOnClickListener(v -> {
+                Intent i = new Intent(MainActivity.this, SetListActivity.class);
+                startActivity(i);
+            });
+        }
     }
 }
