@@ -16,6 +16,7 @@ public class SetListAdapter extends RecyclerView.Adapter<SetListAdapter.VH> {
 
     public interface OnSetClickListener {
         void onSetClicked(FlashcardSet set);
+        void onSetLongClicked(FlashcardSet set, int position);
     }
 
     private final List<FlashcardSet> items;
@@ -50,9 +51,12 @@ public class SetListAdapter extends RecyclerView.Adapter<SetListAdapter.VH> {
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onSetClicked(set);
         });
+        holder.itemView.setOnLongClickListener(v -> {
+            if (listener != null) listener.onSetLongClicked(set, holder.getAdapterPosition());
+            return true;
+        });
     }
 
     @Override
     public int getItemCount() { return items.size(); }
 }
-

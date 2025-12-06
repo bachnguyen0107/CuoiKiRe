@@ -3,8 +3,10 @@ package com.example.finals1;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.content.Intent;
+import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -55,5 +57,54 @@ public class SetListActivity extends AppCompatActivity implements SetListAdapter
         i.putExtra(FlashcardListActivity.EXTRA_SET_TITLE, set.title);
         startActivity(i);
     }
-}
 
+    @Override
+    public void onSetLongClicked(FlashcardSet set, int position) {
+        String[] options = {"Rename", "Delete"};
+        new AlertDialog.Builder(this)
+                .setTitle(set.title)
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) {
+                        showRenameDialog(set);
+                    } else if (which == 1) {
+                        confirmDelete(set);
+                    }
+                })
+                .show();
+    }
+
+    private void showRenameDialog(FlashcardSet set) {
+        EditText input = new EditText(this);
+        input.setHint("New title");
+        input.setText(set.title);
+        new AlertDialog.Builder(this)
+                .setTitle("Rename set")
+                .setView(input)
+                .setPositiveButton("Save", (d, w) -> {
+                    String newTitle = input.getText().toString().trim();
+                    if (newTitle.isEmpty()) return;
+                    AsyncTask.execute(() -> {
+                        FlashcardSetDao dao = AppDatabase.getInstance(this).flashcardSetDao();
+                        dao.rename(set.id, newTitle, set.description);
+                        runOnUiThread(this::loadSetsAsync);
+                    });
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void confirmDelete(FlashcardSet set) {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete set")
+                .setMessage("This will delete the set and its cards. Continue?")
+                .setPositiveButton("Delete", (d, w) -> {
+                    AsyncTask.execute(() -> {
+                        FlashcardSetDao dao = AppDatabase.getInstance(this).flashcardSetDao();
+                        dao.deleteById(set.id);
+                        runOnUiThread(this::loadSetsAsync);
+                    });
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+}
