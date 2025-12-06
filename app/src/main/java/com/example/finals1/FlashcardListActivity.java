@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,6 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.finals1.data.AppDatabase;
 import com.example.finals1.data.Flashcard;
 import com.example.finals1.data.FlashcardDao;
+
+import android.view.View;
+import android.widget.EditText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +27,7 @@ public class FlashcardListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private FlashcardListAdapter adapter;
     private final List<Flashcard> items = new ArrayList<>();
+    private long setId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +39,20 @@ public class FlashcardListActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerFlashcards);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new FlashcardListAdapter(items);
+        adapter = new FlashcardListAdapter(items, new FlashcardListAdapter.OnFlashcardActionListener() {
+            @Override
+            public void onEditFlashcard(Flashcard card, int position) {
+                showEditDialog(card);
+            }
+
+            @Override
+            public void onDeleteFlashcard(Flashcard card, int position) {
+                confirmDelete(card);
+            }
+        });
         recyclerView.setAdapter(adapter);
 
-        long setId = getIntent().getLongExtra(EXTRA_SET_ID, -1);
+        setId = getIntent().getLongExtra(EXTRA_SET_ID, -1);
         if (setId != -1) {
             loadCardsAsync(setId);
         }
@@ -54,5 +69,44 @@ public class FlashcardListActivity extends AppCompatActivity {
             });
         });
     }
-}
 
+    private void showEditDialog(Flashcard card) {
+        View v = getLayoutInflater().inflate(R.layout.dialog_edit_flashcard, null);
+        EditText edtTerm = v.findViewById(R.id.edtTerm);
+        EditText edtDefinition = v.findViewById(R.id.edtDefinition);
+        edtTerm.setText(card.term);
+        edtDefinition.setText(card.definition);
+        new AlertDialog.Builder(this)
+                .setTitle("Edit flashcard")
+                .setView(v)
+                .setPositiveButton("Save", (d,w) -> {
+                    String term = edtTerm.getText().toString().trim();
+                    String def = edtDefinition.getText().toString().trim();
+                    if (term.isEmpty() || def.isEmpty()) return;
+                    AsyncTask.execute(() -> {
+                        FlashcardDao dao = AppDatabase.getInstance(this).flashcardDao();
+                        card.term = term;
+                        card.definition = def;
+                        dao.update(card);
+                        runOnUiThread(() -> loadCardsAsync(setId));
+                    });
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void confirmDelete(Flashcard card) {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete flashcard")
+                .setMessage("Are you sure you want to delete this card?")
+                .setPositiveButton("Delete", (d,w) -> {
+                    AsyncTask.execute(() -> {
+                        FlashcardDao dao = AppDatabase.getInstance(this).flashcardDao();
+                        dao.deleteById(card.id);
+                        runOnUiThread(() -> loadCardsAsync(setId));
+                    });
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+}
