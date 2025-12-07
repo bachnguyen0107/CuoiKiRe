@@ -112,6 +112,5 @@ public class QuizSelectActivity extends AppCompatActivity implements SetListAdap
 
     @Override
     public void onSetLongClicked(FlashcardSet set, int position) {
-        // No long click actions on quiz selection
     }
 }

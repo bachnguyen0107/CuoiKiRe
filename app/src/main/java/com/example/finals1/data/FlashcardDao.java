@@ -16,6 +16,9 @@ public interface FlashcardDao {
     @Query("SELECT * FROM flashcards WHERE setId = :setId")
     List<Flashcard> getBySet(long setId);
 
+    @Query("SELECT * FROM flashcards WHERE id = :id LIMIT 1")
+    Flashcard getById(long id);
+
     @Update
     int update(Flashcard card);
 

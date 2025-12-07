@@ -62,7 +62,6 @@ public class LoginActivity extends AppCompatActivity {
                 User user = new User(email, hash, salt);
                 dao.insert(user);
                 runOnUiThread(() -> {
-                    // Persist session email after registration (optional auto-login)
                     getSharedPreferences("session", MODE_PRIVATE).edit().putString("email", email).apply();
                     Toast.makeText(this, "Registered. You can now login", Toast.LENGTH_SHORT).show();
                 });

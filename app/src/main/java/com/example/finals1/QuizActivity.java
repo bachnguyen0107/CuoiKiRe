@@ -6,6 +6,7 @@ import android.os.CountDownTimer;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
@@ -32,6 +33,7 @@ public class QuizActivity extends AppCompatActivity {
     private CountDownTimer timer;
 
     private final List<Flashcard> cards = new ArrayList<>();
+    private final List<Long> wrongIds = new ArrayList<>();
     private int index = 0;
     private int correctCount = 0;
 
@@ -114,14 +116,17 @@ public class QuizActivity extends AppCompatActivity {
         Flashcard c = cards.get(index);
         String userAnswer = edtAnswer.getText().toString().trim();
         boolean isCorrect = compareDefinitions(userAnswer, c.definition);
-        if (isCorrect) correctCount++;
+        if (isCorrect) {
+            correctCount++;
+        } else {
+            wrongIds.add(c.id);
+        }
         showResultAndProceed(isCorrect);
     }
 
     private boolean compareDefinitions(String a, String b) {
         if (a == null) a = "";
         if (b == null) b = "";
-        // normalize: case-insensitive, trim, collapse spaces
         String na = a.trim().replaceAll("\\s+", " ").toLowerCase();
         String nb = b.trim().replaceAll("\\s+", " ").toLowerCase();
         return na.equals(nb);
@@ -147,6 +152,14 @@ public class QuizActivity extends AppCompatActivity {
         int total = cards.size();
         // Save result
         saveQuizResult(correctCount, total);
+        // Persist wrong IDs for review
+        String key = "last_wrong_ids_" + setId;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < wrongIds.size(); i++) {
+            if (i > 0) sb.append(',');
+            sb.append(wrongIds.get(i));
+        }
+        getSharedPreferences("quiz", MODE_PRIVATE).edit().putString(key, sb.toString()).apply();
         new AlertDialog.Builder(this)
                 .setTitle("Quiz finished")
                 .setMessage("Score: " + correctCount + " / " + total)
@@ -166,6 +179,7 @@ public class QuizActivity extends AppCompatActivity {
             AppDatabase.getInstance(this).quizResultDao().insert(r);
         });
     }
+
 
     @Override
     protected void onDestroy() {
