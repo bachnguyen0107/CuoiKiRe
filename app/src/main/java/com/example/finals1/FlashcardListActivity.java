@@ -1,11 +1,17 @@
 package com.example.finals1;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,6 +35,8 @@ public class FlashcardListActivity extends AppCompatActivity {
     private FlashcardListAdapter adapter;
     private final List<Flashcard> items = new ArrayList<>();
     private long setId;
+
+    private BroadcastReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +69,28 @@ public class FlashcardListActivity extends AppCompatActivity {
         Button btnAdd = findViewById(R.id.btnAddFlashcard);
         if (btnAdd != null) {
             btnAdd.setOnClickListener(v -> showAddDialog());
+        }
+
+        // Register receiver for flashcard added
+        receiver = new BroadcastReceiver() {
+            @Override public void onReceive(Context context, android.content.Intent intent) {
+                if (BroadcastActions.ACTION_FLASHCARD_ADDED.equals(intent.getAction())) {
+                    long sid = intent.getLongExtra(BroadcastActions.EXTRA_SET_ID, -1);
+                    if (sid == setId) {
+                        loadCardsAsync(setId);
+                    }
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(BroadcastActions.ACTION_FLASHCARD_ADDED);
+        ContextCompat.registerReceiver(this, receiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (receiver != null) {
+            try { unregisterReceiver(receiver); } catch (Exception ignored) {}
         }
     }
 
@@ -132,7 +162,14 @@ public class FlashcardListActivity extends AppCompatActivity {
                     AsyncTask.execute(() -> {
                         FlashcardDao dao = AppDatabase.getInstance(this).flashcardDao();
                         dao.insert(new Flashcard(setId, term, def));
-                        runOnUiThread(() -> loadCardsAsync(setId));
+                        runOnUiThread(() -> {
+                            // Broadcast flashcard added (limit to this app)
+                            Intent b = new Intent(BroadcastActions.ACTION_FLASHCARD_ADDED);
+                            b.setPackage(getPackageName());
+                            b.putExtra(BroadcastActions.EXTRA_SET_ID, setId);
+                            sendBroadcast(b);
+                            loadCardsAsync(setId);
+                        });
                     });
                 })
                 .setNegativeButton("Cancel", null)

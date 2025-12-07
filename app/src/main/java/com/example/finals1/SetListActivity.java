@@ -1,5 +1,8 @@
 package com.example.finals1;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.content.Intent;
@@ -10,6 +13,7 @@ import android.widget.EditText;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,6 +33,7 @@ public class SetListActivity extends AppCompatActivity implements SetListAdapter
     private final List<FlashcardSet> items = new ArrayList<>();
     private final List<FlashcardSet> filtered = new ArrayList<>();
     private long currentUserId = -1;
+    private BroadcastReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +62,27 @@ public class SetListActivity extends AppCompatActivity implements SetListAdapter
             });
         }
 
+        // Register receiver
+        receiver = new BroadcastReceiver() {
+            @Override public void onReceive(Context context, android.content.Intent intent) {
+                String action = intent.getAction();
+                if (BroadcastActions.ACTION_SET_ADDED.equals(action)) {
+                    loadSetsAsync();
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(BroadcastActions.ACTION_SET_ADDED);
+        ContextCompat.registerReceiver(this, receiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED);
+
         resolveCurrentUserIdAndLoad();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (receiver != null) {
+            try { unregisterReceiver(receiver); } catch (Exception ignored) {}
+        }
     }
 
     private void applyFilter(String q) {

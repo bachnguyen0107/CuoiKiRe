@@ -1,5 +1,6 @@
 package com.example.finals1;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -102,6 +103,11 @@ public class CreateSetActivity extends AppCompatActivity {
             }
             runOnUiThread(() -> {
                 Toast.makeText(this, "Set saved", Toast.LENGTH_SHORT).show();
+                // Broadcast set added
+                Intent b = new Intent(BroadcastActions.ACTION_SET_ADDED);
+                b.setPackage(getPackageName());
+                b.putExtra(BroadcastActions.EXTRA_SET_ID, setId);
+                sendBroadcast(b);
                 finish();
             });
         });
