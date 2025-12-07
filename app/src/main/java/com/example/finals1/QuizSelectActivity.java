@@ -3,6 +3,9 @@ package com.example.finals1;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.content.Intent;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +26,7 @@ public class QuizSelectActivity extends AppCompatActivity implements SetListAdap
     private RecyclerView recyclerView;
     private SetListAdapter adapter;
     private final List<FlashcardSet> items = new ArrayList<>();
+    private final List<FlashcardSet> filtered = new ArrayList<>();
     private long currentUserId = -1;
 
     @Override
@@ -34,10 +38,36 @@ public class QuizSelectActivity extends AppCompatActivity implements SetListAdap
 
         recyclerView = findViewById(R.id.recyclerQuizSets);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new SetListAdapter(items, this);
+        adapter = new SetListAdapter(filtered, this);
         recyclerView.setAdapter(adapter);
 
+        EditText edtSearch = findViewById(R.id.edtSearchQuizSets);
+        if (edtSearch != null) {
+            edtSearch.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+                @Override
+                public void afterTextChanged(Editable s) { applyFilter(s.toString()); }
+            });
+        }
+
         resolveCurrentUserAndLoad();
+    }
+
+    private void applyFilter(String q) {
+        String query = q == null ? "" : q.trim().toLowerCase();
+        filtered.clear();
+        for (FlashcardSet s : items) {
+            String title = s.title == null ? "" : s.title.toLowerCase();
+            if (query.isEmpty() || title.contains(query)) {
+                filtered.add(s);
+            }
+        }
+        adapter.notifyDataSetChanged();
     }
 
     private void resolveCurrentUserAndLoad() {
@@ -67,7 +97,7 @@ public class QuizSelectActivity extends AppCompatActivity implements SetListAdap
             runOnUiThread(() -> {
                 items.clear();
                 items.addAll(mine);
-                adapter.notifyDataSetChanged();
+                applyFilter( ((EditText) findViewById(R.id.edtSearchQuizSets)).getText().toString() );
             });
         });
     }

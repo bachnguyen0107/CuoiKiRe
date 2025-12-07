@@ -3,6 +3,8 @@ package com.example.finals1;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.content.Intent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
@@ -25,6 +27,7 @@ public class SetListActivity extends AppCompatActivity implements SetListAdapter
     private RecyclerView recyclerView;
     private SetListAdapter adapter;
     private final List<FlashcardSet> items = new ArrayList<>();
+    private final List<FlashcardSet> filtered = new ArrayList<>();
     private long currentUserId = -1;
 
     @Override
@@ -35,10 +38,38 @@ public class SetListActivity extends AppCompatActivity implements SetListAdapter
 
         recyclerView = findViewById(R.id.recyclerSets);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new SetListAdapter(items, this);
+        adapter = new SetListAdapter(filtered, this);
         recyclerView.setAdapter(adapter);
 
+        EditText edtSearch = findViewById(R.id.edtSearchSets);
+        if (edtSearch != null) {
+            edtSearch.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    applyFilter(s.toString());
+                }
+            });
+        }
+
         resolveCurrentUserIdAndLoad();
+    }
+
+    private void applyFilter(String q) {
+        String query = q == null ? "" : q.trim().toLowerCase();
+        filtered.clear();
+        for (FlashcardSet s : items) {
+            String title = s.title == null ? "" : s.title.toLowerCase();
+            if (query.isEmpty() || title.contains(query)) {
+                filtered.add(s);
+            }
+        }
+        adapter.notifyDataSetChanged();
     }
 
     private void resolveCurrentUserIdAndLoad() {
@@ -69,7 +100,7 @@ public class SetListActivity extends AppCompatActivity implements SetListAdapter
             runOnUiThread(() -> {
                 items.clear();
                 items.addAll(mine);
-                adapter.notifyDataSetChanged();
+                applyFilter( ((EditText) findViewById(R.id.edtSearchSets)).getText().toString() );
             });
         });
     }

@@ -11,6 +11,14 @@
         android:padding="16dp"
         android:textStyle="bold"/>
 
+    <EditText
+        android:id="@+id/edtSearchQuizSets"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Search sets for quiz"
+        android:padding="12dp"
+        android:inputType="text" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerQuizSets"
         android:layout_width="match_parent"

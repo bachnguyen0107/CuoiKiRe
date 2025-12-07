@@ -12,10 +12,18 @@
         android:textStyle="bold"
         android:padding="16dp" />
 
+    <EditText
+        android:id="@+id/edtSearchSets"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Search sets by name"
+        android:padding="12dp"
+        android:inputType="text" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerSets"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
 </LinearLayout>
-
