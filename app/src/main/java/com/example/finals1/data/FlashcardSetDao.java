@@ -16,6 +16,10 @@ public interface FlashcardSetDao {
     @Query("SELECT * FROM flashcard_sets ORDER BY id DESC")
     List<FlashcardSet> getAll();
 
+    // New: get all sets for a specific user
+    @Query("SELECT * FROM flashcard_sets WHERE userId = :userId ORDER BY id DESC")
+    List<FlashcardSet> getAllForUser(long userId);
+
     // Update the whole entity (title/description)
     @Update
     int update(FlashcardSet set);

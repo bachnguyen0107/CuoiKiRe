@@ -9,10 +9,12 @@ public class FlashcardSet {
     public long id;
     public String title;
     public String description;
+    // Associate set with owning user
+    public long userId;
 
-    public FlashcardSet(String title, String description) {
+    public FlashcardSet(String title, String description, long userId) {
         this.title = title;
         this.description = description;
+        this.userId = userId;
     }
 }
-

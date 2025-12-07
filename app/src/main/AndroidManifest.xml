@@ -31,6 +31,12 @@
         <activity
             android:name=".FlashcardListActivity"
             android:exported="false" />
+        <activity
+            android:name=".QuizSelectActivity"
+            android:exported="false" />
+        <activity
+            android:name=".QuizActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

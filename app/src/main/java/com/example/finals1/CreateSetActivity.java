@@ -17,11 +17,14 @@ import com.example.finals1.data.Flashcard;
 import com.example.finals1.data.FlashcardDao;
 import com.example.finals1.data.FlashcardSet;
 import com.example.finals1.data.FlashcardSetDao;
+import com.example.finals1.data.User;
+import com.example.finals1.data.UserDao;
 
 public class CreateSetActivity extends AppCompatActivity {
 
     private EditText edtTitle, edtDescription;
     private LinearLayout rowsContainer;
+    private long currentUserId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +42,25 @@ public class CreateSetActivity extends AppCompatActivity {
         btnAddRow.setOnClickListener(v -> addRow());
         btnSaveSet.setOnClickListener(v -> saveSet());
 
+        // Resolve current user
+        resolveCurrentUser();
+
         // Start with two rows by default
         addRow();
         addRow();
+    }
+
+    private void resolveCurrentUser() {
+        String email = getIntent().getStringExtra(LoginActivity.EXTRA_EMAIL);
+        if (email == null || email.isEmpty()) {
+            email = getSharedPreferences("session", MODE_PRIVATE).getString("email", "");
+        }
+        final String finalEmail = email;
+        AsyncTask.execute(() -> {
+            UserDao userDao = AppDatabase.getInstance(this).userDao();
+            User u = finalEmail == null || finalEmail.isEmpty() ? null : userDao.findByEmail(finalEmail);
+            currentUserId = (u != null) ? u.id : -1;
+        });
     }
 
     private void addRow() {
@@ -56,6 +75,10 @@ public class CreateSetActivity extends AppCompatActivity {
             edtTitle.setError("Title required");
             return;
         }
+        if (currentUserId == -1) {
+            Toast.makeText(this, "No logged in user", Toast.LENGTH_SHORT).show();
+            return;
+        }
         // Collect term-definition pairs
         int count = rowsContainer.getChildCount();
         if (count < 2) {
@@ -66,7 +89,7 @@ public class CreateSetActivity extends AppCompatActivity {
             AppDatabase db = AppDatabase.getInstance(this);
             FlashcardSetDao setDao = db.flashcardSetDao();
             FlashcardDao cardDao = db.flashcardDao();
-            long setId = setDao.insert(new FlashcardSet(title, description));
+            long setId = setDao.insert(new FlashcardSet(title, description, currentUserId));
             for (int i = 0; i < count; i++) {
                 View row = rowsContainer.getChildAt(i);
                 EditText edtTerm = row.findViewById(R.id.edtTerm);
@@ -84,4 +107,3 @@ public class CreateSetActivity extends AppCompatActivity {
         });
     }
 }
-
