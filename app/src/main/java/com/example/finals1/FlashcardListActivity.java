@@ -14,6 +14,7 @@ import com.example.finals1.data.Flashcard;
 import com.example.finals1.data.FlashcardDao;
 
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import java.util.ArrayList;
@@ -55,6 +56,11 @@ public class FlashcardListActivity extends AppCompatActivity {
         setId = getIntent().getLongExtra(EXTRA_SET_ID, -1);
         if (setId != -1) {
             loadCardsAsync(setId);
+        }
+
+        Button btnAdd = findViewById(R.id.btnAddFlashcard);
+        if (btnAdd != null) {
+            btnAdd.setOnClickListener(v -> showAddDialog());
         }
     }
 
@@ -103,6 +109,29 @@ public class FlashcardListActivity extends AppCompatActivity {
                     AsyncTask.execute(() -> {
                         FlashcardDao dao = AppDatabase.getInstance(this).flashcardDao();
                         dao.deleteById(card.id);
+                        runOnUiThread(() -> loadCardsAsync(setId));
+                    });
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void showAddDialog() {
+        View v = getLayoutInflater().inflate(R.layout.dialog_edit_flashcard, null);
+        EditText edtTerm = v.findViewById(R.id.edtTerm);
+        EditText edtDefinition = v.findViewById(R.id.edtDefinition);
+        edtTerm.setText("");
+        edtDefinition.setText("");
+        new AlertDialog.Builder(this)
+                .setTitle("Add flashcard")
+                .setView(v)
+                .setPositiveButton("Save", (d,w) -> {
+                    String term = edtTerm.getText().toString().trim();
+                    String def = edtDefinition.getText().toString().trim();
+                    if (term.isEmpty() || def.isEmpty()) return;
+                    AsyncTask.execute(() -> {
+                        FlashcardDao dao = AppDatabase.getInstance(this).flashcardDao();
+                        dao.insert(new Flashcard(setId, term, def));
                         runOnUiThread(() -> loadCardsAsync(setId));
                     });
                 })
