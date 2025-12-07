@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.finals1.data.AppDatabase;
 import com.example.finals1.data.Flashcard;
 import com.example.finals1.data.FlashcardDao;
+import com.example.finals1.data.QuizResult;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -144,11 +145,26 @@ public class QuizActivity extends AppCompatActivity {
     private void endQuiz() {
         if (timer != null) timer.cancel();
         int total = cards.size();
+        // Save result
+        saveQuizResult(correctCount, total);
         new AlertDialog.Builder(this)
                 .setTitle("Quiz finished")
                 .setMessage("Score: " + correctCount + " / " + total)
                 .setPositiveButton("Done", (d,w) -> finish())
                 .show();
+    }
+
+    private void saveQuizResult(int correct, int total) {
+        final String email = getSharedPreferences("session", MODE_PRIVATE).getString("email", "");
+        AsyncTask.execute(() -> {
+            QuizResult r = new QuizResult();
+            r.setId = setId;
+            r.userEmail = email;
+            r.correctCount = correct;
+            r.totalCount = total;
+            r.timestampMillis = System.currentTimeMillis();
+            AppDatabase.getInstance(this).quizResultDao().insert(r);
+        });
     }
 
     @Override

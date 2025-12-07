@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+
         Button btnLogout = findViewById(R.id.btnLogout);
         if (btnLogout != null) {
             btnLogout.setOnClickListener(v -> {

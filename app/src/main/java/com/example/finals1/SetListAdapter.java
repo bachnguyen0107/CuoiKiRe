@@ -4,11 +4,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.finals1.data.AppDatabase;
 import com.example.finals1.data.FlashcardSet;
+import com.example.finals1.data.QuizResult;
 
 import java.util.List;
 
@@ -28,11 +31,14 @@ public class SetListAdapter extends RecyclerView.Adapter<SetListAdapter.VH> {
     }
 
     static class VH extends RecyclerView.ViewHolder {
-        TextView tvTitle, tvDesc;
+        TextView tvTitle, tvDesc, tvPercent;
+        ProgressBar progressBar;
         VH(@NonNull View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tvSetTitle);
             tvDesc = itemView.findViewById(R.id.tvSetDesc);
+            progressBar = itemView.findViewById(R.id.progressSet);
+            tvPercent = itemView.findViewById(R.id.tvSetPercent);
         }
     }
 
@@ -55,6 +61,19 @@ public class SetListAdapter extends RecyclerView.Adapter<SetListAdapter.VH> {
             if (listener != null) listener.onSetLongClicked(set, holder.getAdapterPosition());
             return true;
         });
+
+        // Load last quiz result for this set and current user
+        String email = holder.itemView.getContext().getSharedPreferences("session", holder.itemView.getContext().MODE_PRIVATE)
+                .getString("email", "");
+        new Thread(() -> {
+            QuizResult last = AppDatabase.getInstance(holder.itemView.getContext())
+                    .quizResultDao().getLastForUserAndSet(email, set.id);
+            int percent = (last == null || last.totalCount == 0) ? 0 : (int) Math.round((last.correctCount * 100.0) / last.totalCount);
+            holder.itemView.post(() -> {
+                if (holder.progressBar != null) holder.progressBar.setProgress(percent);
+                if (holder.tvPercent != null) holder.tvPercent.setText(percent + "%");
+            });
+        }).start();
     }
 
     @Override
