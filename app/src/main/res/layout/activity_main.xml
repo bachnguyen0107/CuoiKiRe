@@ -1,53 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center_horizontal"
+    android:background="#F5F7FA"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/tvWelcome"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/welcome_plain"
-        android:layout_marginTop="32dp" />
+        android:orientation="vertical"
+        android:padding="24dp">
 
-    <Button
-        android:id="@+id/btnLogout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/logout"
-        android:layout_marginTop="16dp" />
+        <!-- Header Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/header_background"
+            android:padding="24dp"
+            android:elevation="4dp"
+            android:layout_marginBottom="24dp">
 
-    <Button
-        android:id="@+id/btnCreateSet"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/create_set"
-        android:layout_marginTop="24dp" />
+            <TextView
+                android:id="@+id/tvWelcome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome_plain"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF" />
 
-    <Button
-        android:id="@+id/btnYourSets"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/your_sets"
-        android:layout_marginTop="16dp" />
+            <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/logout"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/btn_logout"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="10dp"
+                android:layout_marginTop="16dp"
+                android:textSize="14sp" />
+        </LinearLayout>
 
-    <Button
-        android:id="@+id/btnQuiz"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/quiz"
-        android:layout_marginTop="16dp" />
+        <!-- Main Actions Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quick Actions"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#2D3748"
+            android:layout_marginBottom="16dp" />
 
-    <Button
-        android:id="@+id/btnSetReminder"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/set_daily_practice_time"
-        android:layout_marginTop="24dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_background"
+            android:padding="20dp"
+            android:elevation="2dp"
+            android:layout_marginBottom="24dp">
 
-</LinearLayout>
+            <Button
+                android:id="@+id/btnCreateSet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/create_set"
+                android:background="@drawable/btn_primary"
+                android:textColor="#FFFFFF"
+                android:paddingVertical="16dp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:drawableLeft="@drawable/ic_add"
+                android:drawablePadding="12dp"
+                android:gravity="center" />
+
+            <Button
+                android:id="@+id/btnYourSets"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/your_sets"
+                android:background="@drawable/btn_secondary"
+                android:textColor="#FFFFFF"
+                android:paddingVertical="16dp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:drawableLeft="@drawable/ic_folder"
+                android:drawablePadding="12dp"
+                android:gravity="center"
+                android:layout_marginTop="12dp" />
+
+            <Button
+                android:id="@+id/btnQuiz"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/quiz"
+                android:background="@drawable/btn_accent"
+                android:textColor="#FFFFFF"
+                android:paddingVertical="16dp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:drawableLeft="@drawable/ic_quiz"
+                android:drawablePadding="12dp"
+                android:gravity="center"
+                android:layout_marginTop="12dp" />
+        </LinearLayout>
+
+        <!-- Settings Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Settings"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#2D3748"
+            android:layout_marginBottom="16dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/card_background"
+            android:padding="20dp"
+            android:elevation="2dp">
+
+            <Button
+                android:id="@+id/btnSetReminder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/set_daily_practice_time"
+                android:background="@drawable/btn_reminder"
+                android:textColor="#2D3748"
+                android:paddingVertical="16dp"
+                android:textSize="16sp"
+                android:drawableLeft="@drawable/ic_bell"
+                android:drawablePadding="12dp"
+                android:gravity="center" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

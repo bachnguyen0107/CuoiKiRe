@@ -1,51 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F5F7FA">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="20dp">
 
-        <EditText
-            android:id="@+id/edtTitle"
+        <!-- Header Card -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/title_hint"
-            android:inputType="textCapWords"
-            android:autofillHints="" />
+            android:orientation="vertical"
+            android:background="@drawable/card_background"
+            android:padding="20dp"
+            android:elevation="2dp"
+            android:layout_marginBottom="16dp">
 
-        <EditText
-            android:id="@+id/edtDescription"
-            android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Create New Set"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#2D3748"
+                android:layout_marginBottom="16dp" />
+
+            <EditText
+                android:id="@+id/edtTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/title_hint"
+                android:inputType="textCapWords"
+                android:background="@drawable/input_background"
+                android:padding="16dp"
+                android:textSize="16sp"
+                android:autofillHints="" />
+
+            <EditText
+                android:id="@+id/edtDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/description_hint"
+                android:inputType="textMultiLine"
+                android:background="@drawable/input_background"
+                android:padding="16dp"
+                android:textSize="16sp"
+                android:minHeight="100dp"
+                android:gravity="top"
+                android:layout_marginTop="12dp"
+                android:autofillHints="" />
+        </LinearLayout>
+
+        <!-- Cards Section -->
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/description_hint"
-            android:inputType="textMultiLine"
-            android:layout_marginTop="8dp"
-            android:autofillHints="" />
+            android:text="Flashcards"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#2D3748"
+            android:layout_marginBottom="12dp" />
 
         <LinearLayout
             android:id="@+id/rowsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="16dp" />
+            android:orientation="vertical" />
 
         <Button
             android:id="@+id/btnAddRow"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/add_card"
+            android:background="@drawable/btn_add_card"
+            android:textColor="#5B47ED"
+            android:paddingVertical="14dp"
+            android:textStyle="bold"
             android:layout_marginTop="12dp" />
 
+        <!-- Save Button -->
         <Button
             android:id="@+id/btnSaveSet"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/save_set"
-            android:layout_marginTop="12dp" />
+            android:background="@drawable/btn_primary"
+            android:textColor="#FFFFFF"
+            android:paddingVertical="16dp"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp" />
 
     </LinearLayout>
 </ScrollView>
