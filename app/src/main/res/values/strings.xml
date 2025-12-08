@@ -26,4 +26,7 @@
     <string name="add_flashcard">Add A Flashcard</string>
     <string name="quiz">Quiz</string>
     <string name="set_daily_practice_time">Set daily practice time</string>
+    <!-- Dictionary UI strings -->
+    <string name="hint_enter_word">Enter word</string>
+    <string name="action_lookup">Lookup</string>
 </resources>
