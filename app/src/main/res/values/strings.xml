@@ -29,4 +29,8 @@
     <!-- Dictionary UI strings -->
     <string name="hint_enter_word">Enter word</string>
     <string name="action_lookup">Lookup</string>
+    <string name="hint_flip">Tap to flip</string>
+    <string name="hint_flip_back">Tap to flip back</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
 </resources>
