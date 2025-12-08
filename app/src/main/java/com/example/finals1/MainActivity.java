@@ -1,12 +1,12 @@
 package com.example.finals1;
 
 import android.app.AlarmManager;
-import android.app.AlarmManager.AlarmClockInfo;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -23,6 +23,9 @@ import androidx.core.content.ContextCompat;
 
 import com.example.finals1.reminder.ReminderReceiver;
 import android.provider.Settings;
+import com.example.finals1.dictionary.DictionaryRepository;
+import java.util.Locale;
+import androidx.annotation.NonNull;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQ_POST_NOTIFICATIONS = 5001;
@@ -96,6 +99,36 @@ public class MainActivity extends AppCompatActivity {
         if (btnSetReminder != null) {
             btnSetReminder.setOnClickListener(v -> showTimePickerAndSchedule());
         }
+
+        Button btnLookup = findViewById(R.id.btnLookup);
+        EditText edtWord = findViewById(R.id.edtWord);
+        if (btnLookup != null && edtWord != null) {
+            btnLookup.setOnClickListener(v -> lookupWord(edtWord.getText().toString()));
+        }
+    }
+
+    private void lookupWord(String word) {
+        if (word == null || word.trim().isEmpty()) {
+            Toast.makeText(this, "Enter a word to lookup", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        new Thread(() -> {
+            try {
+                DictionaryRepository repo = new DictionaryRepository(MainActivity.this);
+                com.example.finals1.data.DictionaryEntry e = repo.lookup(word);
+                runOnUiThread(() -> new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Definition for '" + e.word + "'")
+                        .setMessage(e.definition)
+                        .setPositiveButton("OK", null)
+                        .show());
+            } catch (Exception ex) {
+                runOnUiThread(() -> new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Lookup failed")
+                        .setMessage(String.valueOf(ex))
+                        .setPositiveButton("OK", null)
+                        .show());
+            }
+        }).start();
     }
 
     private void showTimePickerAndSchedule() {
@@ -111,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
                         getSharedPreferences("reminder", MODE_PRIVATE)
                                 .edit().putInt("hour", hour).putInt("minute", minute).apply();
                         scheduleDailyReminder(hour, minute);
-                        Toast.makeText(this, "Reminder set for " + String.format("%02d:%02d", hour, minute), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Reminder set for " + String.format(Locale.getDefault(), "%02d:%02d", hour, minute), Toast.LENGTH_SHORT).show();
                     } catch (Throwable t) {
                         Log.e("Reminder", "Failed to save reminder", t);
                         new AlertDialog.Builder(this)
@@ -133,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra(ReminderReceiver.EXTRA_MESSAGE, "Time to practice your flashcards!");
             PendingIntent pi = PendingIntent.getBroadcast(
                     this, 3000, intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT | (android.os.Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0)
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
             );
             if (am == null || pi == null) {
                 throw new IllegalStateException("AlarmManager or PendingIntent is null");
@@ -187,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQ_POST_NOTIFICATIONS) {
             // Optional: feedback
